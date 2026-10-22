@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SussexStone</title>
+<style>
+  :root {
+    --bg: #101B33; --bg2: #142344; --line: #22335A; --line2: #1C2C4C;
+    --text: #EDE8DE; --muted: #8CA3C9; --dim: #5E759F; --accent: #7FB3D5;
+    --warn: #E08A62; --ok: #6FBF8E; --card: #15264A; --input: #142344;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #F5F3EE; --bg2: #FFFFFF; --line: #D9D5CB; --line2: #E6E2D8;
+      --text: #1B2438; --muted: #4A5877; --dim: #7B86A0; --accent: #2B6C99;
+      --warn: #B5502A; --ok: #2F7D52; --card: #FFFFFF; --input: #FFFFFF;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .mono { font-family: ui-monospace, "IBM Plex Mono", Menlo, Consolas, monospace; }
+  header { background: linear-gradient(180deg, var(--bg2), var(--bg)); border-bottom: 1px solid var(--line); padding: 28px 16px 18px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .eyebrow { font-size: 11px; letter-spacing: .14em; color: var(--accent); text-transform: uppercase; }
+  h1 { margin: 6px 0 2px; font-size: 28px; font-weight: 600; letter-spacing: -.01em; }
+  .sub { font-size: 12px; color: var(--muted); }
+  nav { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; gap: 2px; overflow-x: auto; padding: 0 8px; }
+  nav button { background: none; border: none; color: var(--muted); padding: 12px 12px; font: inherit; font-size: 13.5px; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; }
+  nav button.on { color: var(--text); border-bottom-color: var(--accent); }
+  nav button:focus-visible, .btn:focus-visible, summary:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  main { padding: 8px 16px 64px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin: 28px 0 8px; font-weight: 600; }
+  .item { border-bottom: 1px solid var(--line2); }
+  details > summary { list-style: none; cursor: pointer; padding: 12px 2px; display: flex; gap: 12px; align-items: flex-start; }
+  details > summary::-webkit-details-marker { display: none; }
+  .chev { color: var(--dim); transition: transform .15s; margin-top: 2px; flex-shrink: 0; }
+  details[open] .chev { transform: rotate(90deg); }
+  .t { flex: 1; min-width: 0; }
+  .t b { font-weight: 500; font-size: 14.5px; }
+  .due { font-size: 11px; color: var(--dim); flex-shrink: 0; margin-top: 3px; text-align: right; }
+  .due.over { color: var(--warn); }
+  .due.soon { color: var(--accent); }
+  .body { padding: 0 2px 14px 26px; font-size: 13.5px; color: var(--muted); }
+  .body ol { margin: 8px 0 0; padding-left: 20px; color: var(--text); opacity: .85; }
+  .body li { margin-bottom: 4px; }
+  .actions { display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
+  .btn { background: var(--card); border: 1px solid var(--line); color: var(--text); border-radius: 6px; padding: 6px 12px; font: inherit; font-size: 12.5px; cursor: pointer; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #0E1830; border-color: var(--accent); font-weight: 600; }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--dim); padding: 6px 4px; }
+  .tag { display: inline-block; font-size: 10.5px; padding: 1px 7px; border-radius: 10px; border: 1px solid var(--line); color: var(--muted); margin-left: 6px; vertical-align: 1px; }
+  .done b { text-decoration: line-through; color: var(--dim); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 10px 0; }
+  .card .row { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .kv { padding: 11px 2px; border-bottom: 1px solid var(--line2); }
+  .kv .k { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  .kv .v { margin-top: 2px; font-size: 14px; }
+  a { color: var(--accent); }
+  form.add { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; margin-top: 10px; }
+  form.add .full { grid-column: 1 / -1; }
+  input, textarea, select { width: 100%; background: var(--input); border: 1px solid var(--line); border-radius: 6px; color: var(--text); padding: 9px 10px; font: inherit; font-size: 14px; }
+  textarea { resize: vertical; min-height: 60px; }
+  .progress { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 12px; }
+  .progress i { display: block; height: 100%; background: var(--accent); }
+  .empty { color: var(--dim); padding: 14px 2px; font-size: 13.5px; }
+  .note { font-size: 12px; color: var(--dim); border: 1px dashed var(--line); border-radius: 8px; padding: 10px 12px; margin-top: 14px; }
+  footer { max-width: 760px; margin: 0 auto; padding: 0 16px 48px; font-size: 12px; color: var(--dim); }
+  footer .btn { margin-right: 6px; margin-top: 6px; }
+  @media (max-width: 520px) { form.add { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow mono">House manual</div>
+    <h1>SussexStone</h1>
+    <div class="sub mono">Built ~1996 · 2.5 acres · Move-in 10/15/2026</div>
+    <div class="progress" aria-hidden="true"><i id="bar" style="width:0%"></i></div>
+    <div class="sub mono" id="barlabel" style="margin-top:6px"></div>
+  </div>
+</header>
+<nav><div class="wrap" id="tabs" role="tablist"></div></nav>
+<main><div class="wrap" id="view"></div></main>
+<footer>
+  <div class="note">Contacts, bills, checkmarks and the log are saved in this browser only. They are not stored in the GitHub repo and do not sync between devices. Use Export to back them up or move them to another device.</div>
+  <button class="btn" id="exp">Export backup</button>
+  <button class="btn" id="imp">Import backup</button>
+  <input type="file" id="file" accept="application/json" hidden>
+</footer>
+
+<script>
+/* ===================================================================
+   DATA — edit this block to change the built-in tasks and reference info
+   =================================================================== */
+
+// One-time tasks. due = ISO date. how = optional step list.
+const PUNCH = [
+  { id:"p17", title:"Schedule sprinkler blowout", due:"2026-10-23",
+    detail:"The inspector did not test the front and back yard sprinklers. Water left in the lines can freeze and crack pipes and heads.",
+    how:["Call a sprinkler company and book a blowout before the first hard freeze. They fill up fast in October.","Ask the sellers whether it was already done this fall. If so, skip the call.","Ask the company to show you the system shutoff and the controller so you can handle it later."] },
+  { id:"p13", title:"Mark the radon gauge at 0.7", due:"2026-10-22",
+    detail:"A radon system is installed in the basement. The inspector measured 0.7 pCi/l (the action level is 4.0) and asked you to mark the gauge so you have a baseline to compare against in future years.",
+    how:["Go to the basement and find the white PVC radon pipe that runs up from the floor. Mounted on it is a clear U-shaped tube with colored liquid. This is the system gauge.","The liquid sits at one level on the left side and another on the right. The inspector marked both spots.","With a permanent marker, draw a line on the tube at each of the two liquid levels.","Write 0.7 next to the lines and add the date, 8/21/26.","Check it a few times a year. If the liquid sits at your marks, the system is working. If the two sides ever look level with no gap, the fan may have stopped. Call a radon mitigation company."] },
+  { id:"p18", title:"Ask sellers for records, vendors, manuals, blueprints", due:"2026-10-22",
+    detail:"The sellers kept the house in great shape, and their records will tell you what's been serviced and who to call. The builder isn't named anywhere and the inspector saw no blueprints.",
+    how:["Ask your agent to request service history, vendor names (HVAC, sprinkler, generator, landscaping, insulation), appliance manuals and any blueprints.","Ask who installed the generator, and for the sauna instructions they left.","Add the vendors to the Contacts tab."] },
+  { id:"p1", title:"Entry slab: backer rod + caulk", due:"2026-10-20",
+    detail:"Cracks in the first slab of the front walk are getting wider. Sealing them now keeps water from undermining the slab over the next 3–5 years.",
+    how:["Clean debris out of the cracks with a wire brush and shop vac. Let them dry.","Press foam backer rod into any crack wide enough to take it.","Fill over it with exterior-grade self-leveling concrete caulk and smooth it."] },
+  { id:"p2", title:"Laundry tub stopper", due:"2026-10-20", detail:"The laundry sink drain is missing its stopper. Buy a basic plastic or rubber utility sink stopper at any hardware store." },
+  { id:"p3", title:"Garage doors: closer and rubbing door", due:"2026-10-20",
+    detail:"The fire-rated door into the house has no closer, so it can stay open. The exterior door to the backyard rubs the top of its frame.",
+    how:["House door: install a spring-loaded self-closing hinge (hardware store, roughly $15–25).","Backyard door: tighten the hinge screws first. If it still rubs, shim the hinges or lightly plane the top edge."] },
+  { id:"p4", title:"Great Room window lock handle", due:"2026-10-20", detail:"The left-side lock on a Great Room casement window doesn't engage fully. Find the window brand on the frame or sash and order a replacement lock set." },
+  { id:"p5", title:"Main suite bedroom door rub", due:"2026-10-20", detail:"The door rubs the frame. Tighten the hinge screws, then shim a hinge or lightly plane the rubbing edge if needed." },
+  { id:"p6", title:"Basement bath window: sand and repaint", due:"2026-11-03",
+    detail:"The east basement bathroom casement has moisture damage in a corner from condensation. It doesn't need replacing. Run the exhaust fan after showers to prevent a repeat.",
+    how:["Sand the damaged wood back to clean, solid material.","If any wood is soft, dig it out and fill with exterior wood filler.","Prime and repaint the frame and sill."] },
+  { id:"p7", title:"NE basement bedroom window: peeling paint", due:"2026-11-03", detail:"Peeling paint on the windows, likely because the shades stay down and trap moisture. Scrape, prime and repaint, and raise the shades now and then for airflow." },
+  { id:"p8", title:"Non-GFCI exterior outlet upgrade", due:"2026-11-03", detail:"One exterior outlet isn't GFCI protected. Replace it with a weather-resistant GFCI outlet. Quick electrician job, or DIY if you're comfortable shutting off the breaker first." },
+  { id:"p9", title:"Laundry half-bath vent fan replacement", due:"2026-11-03", detail:"The fan is loud and near the end of its life. Replace with a quiet fan of the same size and confirm the duct is connected to the outside." },
+  { id:"p10", title:"Quote: attic insulation top-off (~$5k)", due:"2026-11-10", detail:"The attic has 8–10 inches of original blown-in insulation. Target is roughly 16 inches. The inspector's insulation contact estimated about $5,000. Get two or three quotes for the same blown-in material, keeping the soffit vents open." },
+  { id:"p11", title:"Quote: deck stair footing (~$300–400)", due:"2026-11-10", detail:"The rear deck stairs aren't on footings, so they shift with freeze and thaw. The fix is a post behind the stairs on a small frost footing. The inspector says it's about a $300–400 day of work, not a $10,000 job." },
+  { id:"p12", title:"Quote: grading fill at foundation", due:"2026-11-10", detail:"Soil next to the foundation and at the rear walkout has sunk and flattened. A landscaper can fill and re-slope it away from the house in about a day. Ask them to refresh the rock bed too." },
+  { id:"p16", title:"File homestead application (Hennepin County)", due:"2026-11-16",
+    detail:"Homestead classification lowers the taxable value of your primary residence, and a new owner has to apply. Confirm the deadline with the county. It's typically in December.",
+    how:["Search for the Hennepin County homestead application.","Have your closing date, property ID and each owner's ID number ready.","Submit it online or by mail and keep the confirmation."] },
+  { id:"p14", title:"Sweat covers on basement copper lines", due:"2026-11-17",
+    detail:"Cold copper water lines in the basement sweat on humid days and drip near the radon system. It isn't causing damage, but it stains the floor. About a 10-minute fix.",
+    how:["Buy split foam pipe insulation sized for the copper pipe diameter.","Slip it over the exposed cold-water lines near the radon system.","Seal the seam with the adhesive strip or tape."] },
+  { id:"p15", title:"Doorstops on two basement bedroom doors", due:"2026-11-17", detail:"The center hallway bedroom door and the guest suite door have none. Screw-in or hinge-mounted stops protect the walls." }
+];
+
+// Recurring tasks. due = first/next due date. days = repeat interval.
+const RECURRING = [
+  { id:"f1", season:"Fall", title:"Trim limbs off roof, clear gutters, blow out soffits", due:"2026-10-25", days:365, every:"Yearly",
+    detail:"Overhanging limbs and cottonwood fluff clog the gutters and soffit vents. Blocked vents hurt attic airflow and can lead to ice dams.",
+    how:["Trim branches that touch or overhang the roof. Nothing needs to be removed entirely.","Clear the gutters.","Blow out the soffit vents with an air hose or leaf blower. Never use water, which ends up in the attic."] },
+  { id:"f2", season:"Fall", title:"Replace both AprilAire 560 humidifier filters", due:"2026-10-28", days:365, every:"Yearly",
+    detail:"The wood floors and windows depend on winter humidity, and both humidifier water pads were clogged at inspection.",
+    how:["Order two \"AprilAire 560\" water panel filters on Amazon.","Units are in Basement Main Utility Room #1 and the Basement Utility Closet.","Shut off the humidifier and its water supply, swap the pad, and turn it back on.","Set both to 35% for winter."] },
+  { id:"f4", season:"Fall", title:"Test smoke detectors, swap backup batteries", due:"2026-11-02", days:365, every:"Yearly",
+    detail:"Detectors are hardwired with battery backup. Do it right after the clocks change.",
+    how:["Press and hold the test button on each detector until it sounds.","Replace the 9V backup batteries in each one.","Check the date printed on the detector. Replace detectors about every 10 years."] },
+  { id:"f5", season:"Fall", title:"Gas fireplace and chimney inspection/sweep", due:"2026-11-12", days:365, every:"Yearly",
+    detail:"Three gas fireplaces. The inspector did not look inside the chimney flue and recommended a sweep. The main suite fireplace glass was fogging.",
+    how:["Book a certified chimney sweep or gas fireplace technician.","Ask them to inspect all three fireplaces and the flue, and to look at the fogged glass in the main suite.","The office open-flame log set isn't to current code. Ask about it."] },
+  { id:"f6", season:"Fall", title:"Flush both water heaters, check TPRV drain tube", due:"2026-11-14", days:365, every:"Yearly",
+    detail:"Two 50-gallon gas water heaters, both 2019. The one in Utility Room #1 has a corroded drain tube, which can mean a small leak at the pressure relief valve.",
+    how:["Set the gas control to pilot or off. Attach a hose to the drain valve and run it to a floor drain.","Open the drain valve and an upstairs hot tap and drain until the water runs clear.","Close the valve, refill the tank, restore the gas.","Check the copper drain tube on the Utility Room #1 heater for drips or green corrosion. Call a plumber if it's wet."] },
+  { id:"f3", season:"Fall", title:"Sprinkler blowout", due:"2027-10-01", days:365, every:"Yearly",
+    detail:"Have the lines blown out with compressed air before the first hard freeze so the pipes don't crack. Book early in October." },
+  { id:"w1", season:"Winter", title:"First sub-zero snap: drop humidifiers to 30%", due:"2027-01-05", days:365, every:"Yearly",
+    detail:"Normal winter setting is 35%. When the forecast first goes sub-zero (think 20 below), turn both humidifiers down to 30% to avoid frost on the wood windows." },
+  { id:"w2", season:"Winter", title:"Schedule annual generator service", due:"2027-01-11", days:365, every:"Yearly",
+    detail:"The whole-house gas generator should get a yearly service. Call the dealer or installer and have the latest self-test report handy (oil level, battery percentage)." },
+  { id:"w3", season:"Winter", title:"Check generator diagnostics (battery %, oil)", due:"2027-01-15", days:365, every:"Yearly",
+    detail:"The generator runs itself every 30 days and sends a report through its app. Look at battery health and oil level. A battery dropping to around 85% means it's time to replace it." },
+  { id:"w4", season:"Winter", title:"Clean dryer vent", due:"2027-03-06", days:365, every:"Yearly",
+    detail:"Lint buildup in the rigid metal vent is a fire risk.",
+    how:["Unplug the dryer and pull it out from the wall.","Disconnect the vent and run a dryer-vent brush through the duct from both ends.","Vacuum out the lint, reconnect, and check the outside flap opens freely."] },
+  { id:"s1", season:"Spring", title:"Test the sump pump", due:"2027-04-10", days:365, every:"Yearly",
+    detail:"The sump pump is under a sealed cover from the radon system, so the inspector couldn't test it. Have a pro check it before spring thaw.",
+    how:["Ask a plumber or radon contractor to open the sealed lid and test the float.","Make sure the lid is resealed airtight afterward. It's part of the radon system."] },
+  { id:"s2", season:"Spring", title:"Sprinkler spring startup", due:"2027-04-20", days:365, every:"Yearly",
+    detail:"Book the startup. They turn the water on, check for broken heads and leaks, and set the controller schedule." },
+  { id:"s3", season:"Spring", title:"Service the 5-ton AC unit (2009)", due:"2027-05-01", days:365, every:"Yearly",
+    detail:"This Lennox unit is 17 years old against a 20–25 year expected life. The inspector said it's \"not a matter of if, it's a matter of when.\" A pre-summer checkup helps. Your other three HVAC units were replaced in 2019." },
+  { id:"s4", season:"Spring", title:"Check deck boards, driveway cracks, cedar siding", due:"2027-05-15", days:365, every:"Yearly",
+    detail:"A quick walk-around of the exterior.",
+    how:["Deck: look for peeling coating and soft or splintered boards. Replace boards rather than recoat when it fails.","Driveway: reseal any new cracks.","Siding: note where the paint or stain is fading. Repainting is due around 2030."] },
+  { id:"m1", season:"Summer", title:"Gutter and soffit check (cottonwood season)", due:"2027-06-12", days:365, every:"Yearly",
+    detail:"After the cottonwoods drop, clear gutters and soffit vents and confirm the downspouts carry water away from the foundation." },
+  { id:"r1", season:"Ongoing", title:"Clean air-to-air exchanger filters", due:"2026-11-01", days:91, every:"Every 3 months",
+    detail:"Two air-to-air exchangers bring fresh air into the house. Each has a reusable filter. Wipe or vacuum it. Don't hose it down.",
+    how:["Slide out the two reusable filters.","Vacuum or dust them clean.","Once a year, also clean the exchanger core."] },
+  { id:"r3", season:"Ongoing", title:"Replace furnace/AC disposable filters", due:"2026-11-15", days:91, every:"Every 3 months",
+    detail:"Two furnaces and the 3-ton AC air handler use disposable filters. Record the sizes in the House tab once you've looked." },
+  { id:"r2", season:"Ongoing", title:"Radon retest (baseline 0.7 pCi/l)", due:"2028-08-21", days:730, every:"Every 2 years",
+    detail:"Retest every two years and after any major HVAC or structural work. Compare the basement gauge against the marks you made." },
+  { id:"a1", season:"Ongoing", title:"Annual homeowners insurance review", due:"2027-09-15", days:365, every:"Yearly",
+    detail:"Confirm coverage still matches replacement cost. Mention the Class 3 hail-rated roof (about 2011) and the whole-house generator, and ask about discounts." }
+];
+
+// Household schedules
+const HOUSEHOLD = [
+  { k:"Garbage pickup", v:"Every Tuesday, 7am–5pm. Bins to the curb Monday night." },
+  { k:"Mediacom internet", v:"Installed 10/15/2026. 36-month term at $50/month, signed 9/28/2026. Term ends about 10/15/2029. Rate check reminder: 9/28/2029." }
+];
+
+// House reference
+const HOUSE = [
+  { k:"Electrical", v:"400A service. Three panels in the basement utility area: 200A, 200A, and 60A (2019). GFCI and AFCI protected." },
+  { k:"Generator", v:"Whole-house natural gas unit. Self-tests every 30 days and reports diagnostics through its app." },
+  { k:"Furnaces", v:"Two 100,000 BTU gas furnaces, both 2019. Disposable filters (size not recorded yet)." },
+  { k:"Air conditioning", v:"5-ton (2009) serves the 1st floor and basement. 3-ton (2019) serves the master suite and two basement bedrooms. Four thermostat zones with electronic dampers." },
+  { k:"Water heaters", v:"Two 50-gallon gas units, both 2019." },
+  { k:"Humidifiers", v:"Two AprilAire 560 units. Filter: AprilAire 560. 35% in winter, 30% during sub-zero stretches." },
+  { k:"Air-to-air exchangers", v:"Two units. Clean the reusable filters every 3 months and the core yearly." },
+  { k:"Roof", v:"Architectural asphalt shingle, Class 3 hail-rated, about 2011. Roughly half its useful life left." },
+  { k:"Attic insulation", v:"8–10 inches of original blown-in. Target about 16 inches." },
+  { k:"Radon", v:"0.7 pCi/l on 8/21/2026. Mitigation system in place. Sump pump under the sealed cover." },
+  { k:"Siding", v:"Cedar shakes. Repaint or restain in about 4–5 years." },
+  { k:"Water shutoff", v:"Basement." },
+  { k:"Gas shutoff", v:"At the gas meter on the exterior of the house." }
+];
+
+// Starter billing rows (editable in the Billing tab; edits are saved in your browser)
+const DEFAULT_BILLS = [
+  { id:"b1", name:"Mediacom internet", amount:"$50/month", due:"Monthly", term:"36-month term, ends ~10/15/2029", url:"", phone:"", notes:"Check rates and renegotiate around 9/28/2029 before the promo ends." },
+  { id:"b2", name:"Homeowners insurance (State Farm)", amount:"", due:"Annual review: Sept 15", term:"", url:"", phone:"", notes:"Mention the Class 3 hail-rated roof and the whole-house generator." },
+  { id:"b3", name:"Mortgage (Chase)", amount:"", due:"Monthly", term:"5/6 ARM", url:"", phone:"", notes:"Add the first rate-adjustment date once you have it." }
+];
+
+/* ===================================================================
+   APP
+   =================================================================== */
+const KEY = "sussex-house-v3";
+const TABS = [["upcoming","Upcoming"],["tasks","Punch list"],["seasonal","Seasonal"],["contacts","Contacts"],["billing","Billing"],["house","House"],["log","Log"]];
+let S = load();
+let tab = (location.hash || "#upcoming").slice(1);
+if (!TABS.some(t => t[0] === tab)) tab = "upcoming";
+
+function load() {
+  try { const r = JSON.parse(localStorage.getItem(KEY)); if (r) return Object.assign(blank(), r); } catch (e) {}
+  return blank();
+}
+function blank() { return { checked:{}, lastDone:{}, log:[], contacts:[], bills:DEFAULT_BILLS.slice() }; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+const today = () => iso(new Date());
+const parse = s => new Date(s + "T12:00:00");
+const fmt = s => parse(s).toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+const diff = s => Math.round((parse(s) - parse(today())) / 86400000);
+
+function nextDue(r) { return S.lastDone[r.id] ? addDays(S.lastDone[r.id], r.days) : r.due; }
+function dueLabel(s) {
+  const n = diff(s);
+  if (n < 0) return { t: Math.abs(n) + (Math.abs(n)===1?" day":" days") + " overdue", c:"over" };
+  if (n === 0) return { t:"Today", c:"soon" };
+  if (n <= 14) return { t:"In " + n + (n===1?" day":" days"), c:"soon" };
+  return { t: fmt(s), c:"" };
+}
+
+function steps(how) { return how && how.length ? "<ol>" + how.map(h => "<li>" + esc(h) + "</li>").join("") + "</ol>" : ""; }
+
+function taskItem(t, kind) {
+  const done = kind === "punch" && S.checked[t.id];
+  const dueISO = kind === "punch" ? t.due : nextDue(t);
+  const dl = done ? { t:"Done", c:"" } : dueLabel(dueISO);
+  let act;
+  if (kind === "punch") {
+    act = `<button class="btn ${done?"":"primary"}" data-a="check" data-id="${t.id}">${done ? "Mark not done" : "Mark done"}</button>`;
+  } else {
+    const last = S.lastDone[t.id];
+    act = `<button class="btn primary" data-a="did" data-id="${t.id}">Done today</button>` +
+      (last ? `<button class="btn ghost" data-a="undo" data-id="${t.id}">Undo</button><span class="sub mono" style="font-size:11px;color:var(--dim)">Last done ${fmt(last)}</span>` : `<span class="sub mono" style="font-size:11px;color:var(--dim)">Not done yet</span>`);
+  }
+  const tag = kind === "rec" ? `<span class="tag">${esc(t.every)}</span>` : "";
+  return `<div class="item ${done?"done":""}"><details>
+    <summary><span class="chev">▸</span><span class="t"><b>${esc(t.title)}</b>${tag}</span><span class="due mono ${dl.c}">${esc(dl.t)}</span></summary>
+    <div class="body">${esc(t.detail)}${steps(t.how)}<div class="actions">${act}</div></div>
+  </details></div>`;
+}
+
+function allOpen() {
+  const out = [];
+  PUNCH.forEach(t => { if (!S.checked[t.id]) out.push({ t, kind:"punch", d:t.due }); });
+  RECURRING.forEach(t => out.push({ t, kind:"rec", d:nextDue(t) }));
+  return out.sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : 0);
+}
+
+const VIEWS = {
+  upcoming() {
+    const items = allOpen();
+    const over = items.filter(i => diff(i.d) < 0);
+    const soon = items.filter(i => diff(i.d) >= 0 && diff(i.d) <= 30);
+    const later = items.filter(i => diff(i.d) > 30);
+    const block = (title, list) => list.length ? `<h2>${title} · ${list.length}</h2>` + list.map(i => taskItem(i.t, i.kind)).join("") : "";
+    return block("Overdue", over) + block("Next 30 days", soon) + block("Later", later) ||
+      `<div class="empty">Nothing coming up.</div>`;
+  },
+  tasks() {
+    const open = PUNCH.filter(t => !S.checked[t.id]).sort((a,b) => a.due < b.due ? -1 : 1);
+    const done = PUNCH.filter(t => S.checked[t.id]);
+    return `<h2>To do · ${open.length}</h2>` + (open.map(t => taskItem(t, "punch")).join("") || `<div class="empty">All done.</div>`) +
+      (done.length ? `<h2>Done · ${done.length}</h2>` + done.map(t => taskItem(t, "punch")).join("") : "");
+  },
+  seasonal() {
+    return ["Fall","Winter","Spring","Summer","Ongoing"].map(s => {
+      const list = RECURRING.filter(r => r.season === s);
+      return `<h2>${s} · ${list.length}</h2>` + list.map(r => taskItem(r, "rec")).join("");
+    }).join("");
+  },
+  contacts() {
+    const list = S.contacts.slice().sort((a,b) => a.name.localeCompare(b.name));
+    return `<h2>Contacts · ${list.length}</h2>` +
+      (list.map(c => `<div class="card"><div class="row"><b>${esc(c.name)}</b><span class="mono" style="font-size:11px;color:var(--dim)">${esc(c.role)}</span></div>
+        <div style="margin-top:6px;font-size:13.5px">${c.phone ? `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>` : ""}${c.phone && c.email ? " · " : ""}${c.email ? `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>` : ""}</div>
+        ${c.notes ? `<div style="margin-top:4px;font-size:13px;color:var(--muted)">${esc(c.notes)}</div>` : ""}
+        <div class="actions"><button class="btn ghost" data-a="delc" data-id="${c.id}">Remove</button></div></div>`).join("") ||
+        `<div class="empty">No contacts yet. Add your HVAC, generator, sprinkler, landscaper, insulation and insurance contacts below.</div>`) +
+      `<h2>Add a contact</h2><form class="add" id="fc">
+        <input name="name" placeholder="Name or company" required>
+        <input name="role" placeholder="What they do (e.g. Sprinkler blowout)">
+        <input name="phone" placeholder="Phone" type="tel">
+        <input name="email" placeholder="Email" type="email">
+        <textarea name="notes" class="full" placeholder="Notes (optional)"></textarea>
+        <button class="btn primary full" type="submit">Add contact</button></form>`;
+  },
+  billing() {
+    return `<h2>Bills and accounts · ${S.bills.length}</h2>` +
+      (S.bills.map(b => `<div class="card"><div class="row"><b>${esc(b.name)}</b><span class="mono" style="font-size:12px">${esc(b.amount)}</span></div>
+        <div style="margin-top:4px;font-size:13px;color:var(--muted)">${[b.due, b.term].filter(Boolean).map(esc).join(" · ")}</div>
+        ${b.url || b.phone ? `<div style="margin-top:6px;font-size:13.5px">${b.url ? `<a href="${esc(b.url)}" target="_blank" rel="noopener">Pay or log in</a>` : ""}${b.url && b.phone ? " · " : ""}${b.phone ? `<a href="tel:${esc(b.phone)}">${esc(b.phone)}</a>` : ""}</div>` : ""}
+        ${b.notes ? `<div style="margin-top:4px;font-size:13px;color:var(--muted)">${esc(b.notes)}</div>` : ""}
+        <div class="actions"><button class="btn ghost" data-a="delb" data-id="${b.id}">Remove</button></div></div>`).join("") || `<div class="empty">No bills yet.</div>`) +
+      `<h2>Add a bill or account</h2><form class="add" id="fb">
+        <input name="name" placeholder="Name (e.g. Xcel Energy)" required>
+        <input name="amount" placeholder="Amount (e.g. $180/month)">
+        <input name="due" placeholder="When it's due (e.g. 15th monthly)">
+        <input name="term" placeholder="Term or renewal date">
+        <input name="url" placeholder="Pay / login link (https://…)" type="url">
+        <input name="phone" placeholder="Support phone" type="tel">
+        <textarea name="notes" class="full" placeholder="Notes (optional)"></textarea>
+        <button class="btn primary full" type="submit">Add bill</button></form>
+      <div class="note">Don't enter account numbers, PINs or passwords here. This page is stored in your browser, and the built-in content is visible to anyone who can open the site. Keep those in a password manager and save only the payment link and support phone number.</div>`;
+  },
+  house() {
+    const kv = l => l.map(r => `<div class="kv"><div class="k mono">${esc(r.k)}</div><div class="v">${esc(r.v)}</div></div>`).join("");
+    return `<h2>Household</h2>${kv(HOUSEHOLD)}<h2>House systems</h2>${kv(HOUSE)}`;
+  },
+  log() {
+    const l = S.log.slice().sort((a,b) => a.date < b.date ? 1 : -1);
+    const total = l.reduce((s, e) => { const n = parseFloat(String(e.cost).replace(/[^0-9.]/g, "")); return s + (isNaN(n) ? 0 : n); }, 0);
+    return `<h2>Add an entry</h2><form class="add" id="fl">
+        <input name="date" type="date" value="${today()}" required>
+        <input name="cost" placeholder="Cost (optional)">
+        <input name="what" class="full" placeholder="What was done" required>
+        <input name="notes" class="full" placeholder="Who did it / notes (optional)">
+        <button class="btn primary full" type="submit">Add entry</button></form>
+      <h2>History · ${l.length}${total ? " · $" + total.toLocaleString() + " logged" : ""}</h2>` +
+      (l.map(e => `<div class="kv"><div class="row" style="display:flex;justify-content:space-between;gap:12px"><div><span class="mono" style="font-size:11px;color:var(--dim)">${fmt(e.date)}</span><div>${esc(e.what)}</div>${e.notes ? `<div style="font-size:12.5px;color:var(--muted)">${esc(e.notes)}</div>` : ""}</div>
+        <div style="text-align:right">${e.cost ? `<div class="mono" style="font-size:12px">${esc(String(e.cost).startsWith("$") ? e.cost : "$" + e.cost)}</div>` : ""}<button class="btn ghost" data-a="dell" data-id="${e.id}">Remove</button></div></div></div>`).join("") ||
+        `<div class="empty">Nothing logged yet. "Done today" on any seasonal task adds an entry automatically.</div>`);
+  }
+};
+
+function render() {
+  $("#tabs").innerHTML = TABS.map(([k, n]) => `<button role="tab" class="${k===tab?"on":""}" data-tab="${k}" aria-selected="${k===tab}">${n}</button>`).join("");
+  $("#view").innerHTML = VIEWS[tab]();
+  const done = PUNCH.filter(t => S.checked[t.id]).length;
+  $("#bar").style.width = Math.round(done / PUNCH.length * 100) + "%";
+  $("#barlabel").textContent = done + " of " + PUNCH.length + " punch-list items done";
+}
+
+function keepOpen(fn) {
+  const open = [...document.querySelectorAll("details[open]")].map(d => d.querySelector("b").textContent);
+  const y = scrollY;
+  fn(); render();
+  document.querySelectorAll("details").forEach(d => { if (open.includes(d.querySelector("b").textContent)) d.open = true; });
+  scrollTo(0, y);
+}
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+document.addEventListener("click", e => {
+  const tb = e.target.closest("[data-tab]");
+  if (tb) { tab = tb.dataset.tab; location.hash = tab; render(); scrollTo(0, 0); return; }
+  const b = e.target.closest("[data-a]");
+  if (!b) return;
+  const id = b.dataset.id, a = b.dataset.a;
+  keepOpen(() => {
+    if (a === "check") S.checked[id] = !S.checked[id];
+    if (a === "did") {
+      const r = RECURRING.find(x => x.id === id);
+      S.lastDone[id] = today();
+      S.log.push({ id: uid(), rid: id, date: today(), what: r.title, cost: "", notes: "" });
+    }
+    if (a === "undo") {
+      const last = S.lastDone[id];
+      const i = S.log.findIndex(l => l.rid === id && l.date === last);
+      if (i >= 0) S.log.splice(i, 1);
+      delete S.lastDone[id];
+    }
+    if (a === "delc") S.contacts = S.contacts.filter(c => c.id !== id);
+    if (a === "delb") S.bills = S.bills.filter(c => c.id !== id);
+    if (a === "dell") S.log = S.log.filter(c => c.id !== id);
+    save();
+  });
+});
+
+document.addEventListener("submit", e => {
+  e.preventDefault();
+  const f = Object.fromEntries(new FormData(e.target));
+  Object.keys(f).forEach(k => f[k] = String(f[k]).trim());
+  f.id = uid();
+  if (e.target.id === "fc") S.contacts.push(f);
+  if (e.target.id === "fb") S.bills.push(f);
+  if (e.target.id === "fl") S.log.push(f);
+  save(); render();
+});
+
+$("#exp").onclick = () => {
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "sussexstone-backup-" + today() + ".json"; a.click();
+  URL.revokeObjectURL(a.href);
+};
+$("#imp").onclick = () => $("#file").click();
+$("#file").onchange = ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => { try { S = Object.assign(blank(), JSON.parse(r.result)); save(); render(); } catch (e) { alert("That file isn't a valid backup."); } };
+  r.readAsText(f);
+};
+window.addEventListener("hashchange", () => { const t = location.hash.slice(1); if (TABS.some(x => x[0] === t)) { tab = t; render(); } });
+
+render();
+</script>
+</body>
+</html>
