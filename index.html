@@ -125,9 +125,9 @@ const PUNCH = [
   { id:"p10", title:"Quote: attic insulation top-off (~$5k)", due:"2026-11-10", detail:"The attic has 8–10 inches of original blown-in insulation. Target is roughly 16 inches. The inspector's insulation contact estimated about $5,000. Get two or three quotes for the same blown-in material, keeping the soffit vents open." },
   { id:"p11", title:"Quote: deck stair footing (~$300–400)", due:"2026-11-10", detail:"The rear deck stairs aren't on footings, so they shift with freeze and thaw. The fix is a post behind the stairs on a small frost footing. The inspector says it's about a $300–400 day of work, not a $10,000 job." },
   { id:"p12", title:"Quote: grading fill at foundation", due:"2026-11-10", detail:"Soil next to the foundation and at the rear walkout has sunk and flattened. A landscaper can fill and re-slope it away from the house in about a day. Ask them to refresh the rock bed too." },
-  { id:"p16", title:"File homestead application (Hennepin County)", due:"2026-11-16",
+  { id:"p16", title:"File homestead application (county)", due:"2026-11-16",
     detail:"Homestead classification lowers the taxable value of your primary residence, and a new owner has to apply. Confirm the deadline with the county. It's typically in December.",
-    how:["Search for the Hennepin County homestead application.","Have your closing date, property ID and each owner's ID number ready.","Submit it online or by mail and keep the confirmation."] },
+    how:["Search for your county's homestead application.","Have your closing date, property ID and each owner's ID number ready.","Submit it online or by mail and keep the confirmation."] },
   { id:"p14", title:"Sweat covers on basement copper lines", due:"2026-11-17",
     detail:"Cold copper water lines in the basement sweat on humid days and drip near the radon system. It isn't causing damage, but it stains the floor. About a 10-minute fix.",
     how:["Buy split foam pipe insulation sized for the copper pipe diameter.","Slip it over the exposed cold-water lines near the radon system.","Seal the seam with the adhesive strip or tape."] },
@@ -188,7 +188,7 @@ const RECURRING = [
 // Household schedules
 const HOUSEHOLD = [
   { k:"Garbage pickup", v:"Every Tuesday, 7am–5pm. Bins to the curb Monday night." },
-  { k:"Mediacom internet", v:"Installed 10/15/2026. 36-month term at $50/month, signed 9/28/2026. Term ends about 10/15/2029. Rate check reminder: 9/28/2029." }
+  { k:"Internet provider", v:"Installed 10/15/2026. 36-month term at $50/month, signed 9/28/2026. Term ends about 10/15/2029. Rate check reminder: 9/28/2029." }
 ];
 
 // House reference
@@ -210,7 +210,7 @@ const HOUSE = [
 
 // Starter billing rows (editable in the Billing tab; edits are saved in your browser)
 const DEFAULT_BILLS = [
-  { id:"b1", name:"Mediacom internet", amount:"$50/month", due:"Monthly", term:"36-month term, ends ~10/15/2029", url:"", phone:"", notes:"Check rates and renegotiate around 9/28/2029 before the promo ends." },
+  { id:"b1", name:"Internet provider", amount:"$50/month", due:"Monthly", term:"36-month term, ends ~10/15/2029", url:"", phone:"", notes:"Check rates and renegotiate around 9/28/2029 before the promo ends." },
   { id:"b2", name:"Homeowners insurance (State Farm)", amount:"", due:"Annual review: Sept 15", term:"", url:"", phone:"", notes:"Mention the Class 3 hail-rated roof and the whole-house generator." },
   { id:"b3", name:"Mortgage (Chase)", amount:"", due:"Monthly", term:"5/6 ARM", url:"", phone:"", notes:"Add the first rate-adjustment date once you have it." }
 ];
