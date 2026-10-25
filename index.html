@@ -77,7 +77,7 @@
   <div class="wrap">
     <div class="eyebrow mono">House manual</div>
     <h1>SussexStone</h1>
-    <div class="sub mono">Built ~1996 · 2.5 acres · Move-in 10/15/2026</div>
+    <div class="sub mono">Home maintenance and reference</div>
     <div class="progress" aria-hidden="true"><i id="bar" style="width:0%"></i></div>
     <div class="sub mono" id="barlabel" style="margin-top:6px"></div>
   </div>
@@ -188,7 +188,7 @@ const RECURRING = [
 // Household schedules
 const HOUSEHOLD = [
   { k:"Garbage pickup", v:"Every Tuesday, 7am–5pm. Bins to the curb Monday night." },
-  { k:"Internet provider", v:"Installed 10/15/2026. 36-month term at $50/month, signed 9/28/2026. Term ends about 10/15/2029. Rate check reminder: 9/28/2029." }
+  { k:"Internet provider", v:"$50/month. Check rates and renegotiate before the promotional rate ends." }
 ];
 
 // House reference
@@ -210,9 +210,9 @@ const HOUSE = [
 
 // Starter billing rows (editable in the Billing tab; edits are saved in your browser)
 const DEFAULT_BILLS = [
-  { id:"b1", name:"Internet provider", amount:"$50/month", due:"Monthly", term:"36-month term, ends ~10/15/2029", url:"", phone:"", notes:"Check rates and renegotiate around 9/28/2029 before the promo ends." },
-  { id:"b2", name:"Homeowners insurance (State Farm)", amount:"", due:"Annual review: Sept 15", term:"", url:"", phone:"", notes:"Mention the Class 3 hail-rated roof and the whole-house generator." },
-  { id:"b3", name:"Mortgage (Chase)", amount:"", due:"Monthly", term:"5/6 ARM", url:"", phone:"", notes:"Add the first rate-adjustment date once you have it." }
+  { id:"b1", name:"Internet provider", amount:"$50/month", due:"Monthly", term:"", url:"", phone:"", notes:"Check rates and renegotiate before the promotional rate ends." },
+  { id:"b2", name:"Homeowners insurance", amount:"", due:"Annual review: Sept 15", term:"", url:"", phone:"", notes:"Mention the Class 3 hail-rated roof and the whole-house generator." },
+  { id:"b3", name:"Mortgage", amount:"", due:"Monthly", term:"", url:"", phone:"", notes:"" }
 ];
 
 /* ===================================================================
